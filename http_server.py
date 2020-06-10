@@ -1,3 +1,6 @@
+import os
+import mimetypes
+
 from tcp_server import TCPServer
 from http import HTTPRequest
 from typing import Dict
@@ -64,3 +67,28 @@ class HTTPServer(TCPServer):
             blank_line, 
             response_body
         )
+
+    def handle_GET(self, request):
+        filename = request.uri.strip('/') # remove the slash from URI
+
+        if os.path.exists(filename):
+            response_line = self.prepare_response_line(200)
+            content_type = mimetypes.guess_type(filename)[0] or 'text/html'
+            extra_headers = {'Content-Type': content_type}
+            response_headers = self.prepare_response_headers(extra_headers=extra_headers)
+
+            with open(filename) as f:
+                response_body = f.read()
+        else:
+            response_line = self.prepare_response_line(404)
+            response_headers = self.prepare_response_headers()
+            response_body = "<h1>404 Not Found</h1>"
+
+        blank_line = "\r\n"
+
+        return "%s%s%s%s" % (
+                response_line,
+                response_headers,
+                blank_line,
+                response_body
+            )
