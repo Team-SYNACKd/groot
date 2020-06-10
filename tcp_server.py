@@ -4,9 +4,11 @@ class TCPServer:
     def __init__(
         self,
         host: str,
-        port: int) -> None:
+        port: int
+    ) -> None:
         self.host = host
         self.port = port
+        self.PACKET_SIZE = 1024
 
     def start(self) -> None:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
@@ -19,7 +21,7 @@ class TCPServer:
         while True:
             conn, addr = s.accept()
             print("Connected by", addr)
-            data = conn.recv(1024)
+            data = conn.recv(self.PACKET_SIZE)
             response = self.handle_request(data)
             conn.sendall(response.encode())
             conn.close()
