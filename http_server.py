@@ -1,10 +1,12 @@
 from tcp_server import TCPServer
+from http import HTTPRequest
 from typing import Dict
 
 class HTTPServer(TCPServer):
     status_codes = {
         200: 'OK',
         404: 'Not Found',
+        501: 'Not Implemented',
     }
 
     headers = {
@@ -39,23 +41,26 @@ class HTTPServer(TCPServer):
         return headers
 
     def handle_request(self, data) -> str:
-        response_line = self.prepare_response_line(status_code=200)
+        request = HTTPRequest(data)
 
+        try:
+            handler = getattr(self, 'handle_%s' % request.method)
+        except AttributeError:
+            handler = self.handle_http_501
+        
+        response = handler(request)
+        return response
+
+    def handle_http_501(self, request) -> None:
+        response_line = self.prepare_response_line(status_code=501)
         response_headers = self.prepare_response_headers()
-
         blank_line = "\r\n"
 
-        response_body = """
-            <html>
-                <body>
-                    <h1>Request received!</h1>
-                </body>
-            </html>
-        """
+        response_body = "<h1>501 Not Implemented</h1>"
 
         return "%s%s%s%s" % (
-                response_line, 
-                response_headers, 
-                blank_line, 
-                response_body
-            )
+            response_line, 
+            response_headers, 
+            blank_line, 
+            response_body
+        )
