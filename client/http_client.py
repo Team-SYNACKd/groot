@@ -1,4 +1,16 @@
 import socket
+# from urllib.parse import urlparse
+
+# class URL:
+#     def __init__(self, url: str) -> None:
+#         parsed = urlparse(url)
+
+#         self.authority = parsed.netloc
+#         self.full_path = parsed.path
+#         if parsed.query:
+#             self.full_path += "?" + parsed.query
+#         self.scheme = parsed.scheme
+
 
 class HTTPClient:
     def __init__(self, host, resource):
@@ -85,10 +97,10 @@ class HTTPClient:
         port = 80
         try:
             ip = socket.gethostbyname(host)
-            with socket.socket(socket.AF_INET, socket.SOCK_STREAM) as tcp:
-                tcp.connect((ip, port))
-                http.send(tcp)
-                http.recv(tcp)
+            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.connect((ip, port))
+            http.send(sock)
+            http.recv(sock)
         except Exception as e:
             raise e
         return http
