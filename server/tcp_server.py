@@ -1,4 +1,5 @@
 import socket
+import sys
 
 class TCPServer:
     def __init__(
@@ -23,12 +24,12 @@ class TCPServer:
             conn, addr = s.accept()
             print("Connected by", addr)
             data = conn.recv(self.PACKET_SIZE)
-            print(data)
+            sys.stdout.buffer.write(data)
             response = self.handle_request(data)
             conn.sendall(response.encode())
             conn.close()
 
-    def handle_request(self, data) -> str:
+    def handle_request(self, data: bytes) -> bytes:
         """
         Handles incoming data and returns a response.
         Override this in subclass.
