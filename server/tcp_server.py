@@ -8,12 +8,13 @@ class TCPServer:
     ) -> None:
         self.host = host
         self.port = port
-        self.PACKET_SIZE = 1024
+        self.PACKET_SIZE = 4096
 
     def start(self) -> None:
         s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
         s.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
         s.bind((self.host, self.port))
+        # configure how many client the server can listen simultaneously
         s.listen(5)
 
         print("Listening at", s.getsockname())
@@ -22,6 +23,7 @@ class TCPServer:
             conn, addr = s.accept()
             print("Connected by", addr)
             data = conn.recv(self.PACKET_SIZE)
+            print(data)
             response = self.handle_request(data)
             conn.sendall(response.encode())
             conn.close()
