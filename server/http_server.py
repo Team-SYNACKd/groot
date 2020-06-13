@@ -73,9 +73,10 @@ class HTTPServer(TCPServer):
         )
 
     def handle_GET(self, request):
-        filename = STATIC_ROOT + STATIC_URL + request.uri.strip('/') # remove the slash from URI
+        content = request.uri.strip('/') 
+        filename = STATIC_ROOT + STATIC_URL + content # remove the slash from URI
 
-        if os.path.exists(filename):
+        if content:
             response_line = self.prepare_response_line(200)
             content_type = mimetypes.guess_type(filename)[0] or 'text/html'
             extra_headers = {'Content-Type': content_type}
