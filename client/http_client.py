@@ -1,19 +1,12 @@
+import sys
+sys.path.append("..")
+from http_common import URL
+
 import socket
-# from urllib.parse import urlparse
-
-# class URL:
-#     def __init__(self, url: str) -> None:
-#         parsed = urlparse(url)
-
-#         self.authority = parsed.netloc
-#         self.full_path = parsed.path
-#         if parsed.query:
-#             self.full_path += "?" + parsed.query
-#         self.scheme = parsed.scheme
-
+from urllib.parse import urlparse
 
 class HTTPClient:
-    def __init__(self, host, resource):
+    def __init__(self, host = None, resource = None):
         self.host = host
         self.resource = resource
         self.header = bytes()
@@ -86,24 +79,22 @@ class HTTPClient:
 
         return (self.header, self.body)
 
-    @classmethod
-    def get(cls, host, resource):
-        '''
-        Creates a new HTTPResource with the given host and request, then tries
-        to resolve the host, send the request and receive the response. The
-        downloaded HTTPResource is then returned.
-        '''
-        http = cls(host, resource)
-        port = 80
+    '''
+    Creates a new HTTPResource with the given host and request, then tries
+    to resolve the host, send the request and receive the response. The
+    downloaded HTTPResource is then returned.
+    '''
+    def get(self, url: URL):
+        self.host = url.host
+        self.resource = url.full_path
         try:
-            ip = socket.gethostbyname(host)
+            ip = socket.gethostbyname(url.host)
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.connect((ip, port))
-            http.send(sock)
-            http.recv(sock)
+            sock.connect((ip, url.port))
+            self.send(sock)
+            self.recv(sock)
         except Exception as e:
             raise e
-        return http
 
 
 

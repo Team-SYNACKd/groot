@@ -1,12 +1,16 @@
 import sys
 
 from client.http_client import HTTPClient
+from http_common import URL
 
 if __name__ == '__main__':
-    response = HTTPClient.get(host='www.google.co.in', resource="/")
-    # output the response body (or the header if there is no body)
-    if response.content_length > 0:
-        output = response.body
+    client = HTTPClient()
+
+    #TODO: return a Response object
+    client.get(url=URL("http://www.google.co.in"))
+
+    if client.content_length > 0:
+        output = client.body
     else:
-        output = response.header
+        output = client.header
     sys.stdout.buffer.write(output)
