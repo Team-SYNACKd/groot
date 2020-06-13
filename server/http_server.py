@@ -2,7 +2,7 @@ import os
 import mimetypes
 
 from .tcp_server import TCPServer
-from http import HTTPRequest
+from http_common import HTTPRequest
 from typing import Dict
 
 ROOT = os.path.abspath(os.curdir)
