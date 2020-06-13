@@ -1,6 +1,6 @@
 import sys
 
-from http_client import HTTPClient
+from client.http_client import HTTPClient
 
 if __name__ == '__main__':
     response = HTTPClient.get(host='www.google.co.in', resource="/")

@@ -1,9 +1,13 @@
 import os
 import mimetypes
 
-from tcp_server import TCPServer
+from .tcp_server import TCPServer
 from http import HTTPRequest
 from typing import Dict
+
+ROOT = os.path.abspath(os.curdir)
+STATIC_URL = "/"
+STATIC_ROOT = os.environ.get("STATIC_ROOT", os.path.join(ROOT, "htdocs"))
 
 class HTTPServer(TCPServer):
     status_codes = {
@@ -69,7 +73,7 @@ class HTTPServer(TCPServer):
         )
 
     def handle_GET(self, request):
-        filename = request.uri.strip('/') # remove the slash from URI
+        filename = STATIC_ROOT + STATIC_URL + request.uri.strip('/') # remove the slash from URI
 
         if os.path.exists(filename):
             response_line = self.prepare_response_line(200)
