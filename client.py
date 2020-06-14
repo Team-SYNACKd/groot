@@ -9,8 +9,6 @@ if __name__ == '__main__':
     #TODO: return a Response object
     client.get(url=URL("http://www.google.co.in"))
 
+    sys.stdout.buffer.write(client.header)
     if client.content_length > 0:
-        output = client.body
-    else:
-        output = client.header
-    sys.stdout.buffer.write(output)
+        sys.stdout.buffer.write(client.content)
