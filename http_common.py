@@ -26,22 +26,31 @@ class URL:
             self.full_path += "?" + parsed.query
 
 class HTTPRequest:
-    def __init__(self, data: bytes):
-        self.method = None
-        self.uri = None
+    def __init__(self, uri: URL, method: str = None, data: bytes = b''):
+        self.uri = uri
+        self.host = uri.host
+        self.port = uri.port
+        self.resource = uri.full_path
+        self.method = method
         self.http_version = '1.1' # default to HTTP/1.1 if request doesn't provide a version
         self.headers = {} # a dictionary for headers
+        self.data = data #stores the request data send to the server to be parsed.
+        self.content_length = 0
+        self.body = bytes()
 
-        # call self.parse method to parse the request data
-        self.parse(data)
+        self.http_header_delimiter = b'\r\n\r\n'
+        self.content_length_field = b'Content-Length:'
 
-    def parse(self, data: bytes):
-        lines = data.decode('utf8').split('\r\n')
+    '''
+    _read_request() function is an internal API used to parse
+    the request received at the server and to determine
+    what sort of HTTP method the client connecting to our
+    server is requesting for.
+    '''
+    def _read_request(self, request: bytes):
+        lines = request.decode('utf8').split('\r\n')
 
         request_line = lines[0]
-        self.parse_request_line(request_line)
-
-    def parse_request_line(self, request_line):
         words = request_line.split(' ')
         self.method = words[0]
         self.uri = words[1]

@@ -2,7 +2,7 @@ import os
 import mimetypes
 
 from .tcp_server import TCPServer
-from http_common import HTTPRequest
+from http_common import HTTPRequest, URL
 from typing import Dict
 
 ROOT = os.path.abspath(os.curdir)
@@ -48,7 +48,10 @@ class HTTPServer(TCPServer):
         return headers
 
     def handle_request(self, data) -> str:
-        request = HTTPRequest(data)
+        #TODO: Pretty much like a hack.
+        #Need to find a pretty way to handle this.
+        request = HTTPRequest(uri=URL(self.host))
+        request._read_request(data)
 
         try:
             handler = getattr(self, 'handle_%s' % request.method)
