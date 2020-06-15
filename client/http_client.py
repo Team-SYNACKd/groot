@@ -8,6 +8,8 @@ from urllib.parse import urlparse
 class HTTPClient:
     def __init__(self, request: HTTPRequest):
         self.request = request
+        self.TCP_FASTOPEN = 23
+        self.qlen = 5 # queue length for number of TFO request
 
     def formatted_http_request(self, host, resource, method='GET'):
         request =  '{} {} HTTP/{}\r\nhost: {}\r\n\r\n'.format(method,
@@ -92,6 +94,8 @@ class HTTPClient:
         try:
             ip = socket.gethostbyname(host)
             sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+            sock.setsockopt(socket.SOL_TCP, self.TCP_FASTOPEN, self.qlen)
             sock.connect((ip, port))
             self.send(sock)
             self.recv(sock)
