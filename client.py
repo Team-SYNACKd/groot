@@ -4,7 +4,7 @@ from client.http_client import HTTPClient
 from http_common import URL, HTTPRequest
 
 if __name__ == '__main__':
-    request = HTTPRequest(uri=URL("http://www.google.co.in"))
+    request = HTTPRequest(uri=URL("http://httpd.apache.org/"))
     client = HTTPClient(request)
 
     #TODO: return a Response object
@@ -12,4 +12,4 @@ if __name__ == '__main__':
 
     sys.stdout.buffer.write(req.headers)
     if req.content_length > 0:
-        sys.stdout.buffer.write(req.content)
+        sys.stdout.buffer.write(req.body)
