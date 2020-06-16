@@ -1,17 +1,18 @@
 import sys
+from .tcp_client import TCPClient
+
 sys.path.append("..")
 from http_common import URL, HTTPRequest
 
 import socket
 from urllib.parse import urlparse
 
-class HTTPClient:
+class HTTPClient(TCPClient):
     def __init__(self, request: HTTPRequest):
+        super().__init__(request.host, request.port, request.resource)
         self.request = request
-        self.TCP_FASTOPEN = 23
-        self.qlen = 5 # queue length for number of TFO request
 
-    def formatted_http_request(self, host, resource, method='GET'):
+    def perform_http_request(self, host, resource, method='GET'):
         request =  '{} {} HTTP/{}\r\nhost: {}\r\n\r\n'.format(method,
                                                               resource,
                                                               self.request.http_version,
@@ -39,28 +40,7 @@ class HTTPClient:
                 return int(line[len(self.request.content_length_field):])
         return 0
 
-    def send(self, sock, method = 'GET'):
-        sock.sendall(
-            self.formatted_http_request(self.request.host, self.request.resource, method)
-        )
-
-    def read_until(self, sock, condition, length_start=0, chunk_size=4096):
-        data = bytes()
-        chunk = bytes()
-        length = length_start
-        try:
-            while not condition(length, chunk):
-                chunk = sock.recv(chunk_size)
-                if not chunk:
-                    break
-                else:
-                    data += chunk
-                    length += len(chunk)
-        except socket.timeout:
-            pass
-        return data
-
-    def recv(self, sock):
+    def recieve_response(self, sock):
         '''
         Reads an HTTP Response from the given socket. Returns that response as a
         tuple (header, body) as two sequences of bytes.
@@ -92,13 +72,9 @@ class HTTPClient:
             resource = url.resource
             port = url.port
         try:
-            ip = socket.gethostbyname(host)
-            sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
-            sock.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
-            sock.setsockopt(socket.SOL_TCP, self.TCP_FASTOPEN, self.qlen)
-            sock.connect((ip, port))
-            self.send(sock)
-            self.recv(sock)
+            sock = self.connect(host, port)
+            self.send_request(sock)
+            self.recieve_response(sock)
         except Exception as e:
             raise e
         return self.request
