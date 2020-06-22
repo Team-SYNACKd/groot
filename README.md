@@ -9,6 +9,12 @@ An asynchronous (simple) HTTP 1.1 client and server implementation in python.
 
 This HTTP stack is a screaming-fast, scalable, asynchronous HTTP implementation. While all the other "screaming-fast" implementation looks on improving the performance of processing the code faster. This stack looks to improve the performace of HTTP request and response through various network protocols and it's adaptations. For example, TCP FASTOPEN etc.
 
+Currently supported features:
+
+- HTTP 1.1 cli client and server (shows header and body buffer).
+- Client and server suppots HTTP GET method.
+- TCP FASTOPEN.
+
 #### How a request looks like:
 
 ```
