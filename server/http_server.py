@@ -1,9 +1,11 @@
 import os
 import mimetypes
+from typing import Dict
 
 from .tcp_server import TCPServer
-from http_common import HTTPRequest
-from typing import Dict
+
+from common.http import HTTPRequest
+from common.url import URL
 
 ROOT = os.path.abspath(os.curdir)
 STATIC_URL = "/"
@@ -48,7 +50,10 @@ class HTTPServer(TCPServer):
         return headers
 
     def handle_request(self, data: bytes) -> str:
-        request = HTTPRequest(data)
+        #TODO: Pretty much like a hack.
+        #Need to find a pretty way to handle this.
+        request = HTTPRequest(uri=URL(self.host))
+        request._read_request(data)
 
         try:
             handler = getattr(self, 'handle_%s' % request.method)

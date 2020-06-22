@@ -5,6 +5,10 @@ An asynchronous (simple) HTTP 1.1 client and server implementation in python.
 - (To be) asyncio installed
 
 
+#### How different in this HTTP stack from other pre-existing HTTP implementations?
+
+This HTTP stack is a screaming-fast, scalable, asynchronous HTTP implementation. While all the other "screaming-fast" implementation looks on improving the performance of processing the code faster. This stack looks to improve the performace of HTTP request and response through various network protocols and it's adaptations. For example, TCP FASTOPEN etc.
+
 #### How a request looks like:
 
 ```
