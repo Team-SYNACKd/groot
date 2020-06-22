@@ -1,7 +1,9 @@
 import sys
 
 from client.http_client import HTTPClient
-from http_common import URL, HTTPRequest
+
+from common.url import URL
+from common.http import HTTPRequest
 
 if __name__ == '__main__':
     request = HTTPRequest(uri=URL("http://httpd.apache.org/"))

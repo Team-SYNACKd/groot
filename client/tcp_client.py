@@ -1,8 +1,6 @@
 import socket
-import sys
 
-sys.path.append("..")
-from http_common import HTTPRequest
+from common.http import HTTPRequest
 
 class TCPClient:
     def __init__(

@@ -1,9 +1,11 @@
 import os
 import mimetypes
+from typing import Dict
 
 from .tcp_server import TCPServer
-from http_common import HTTPRequest, URL
-from typing import Dict
+
+from common.http import HTTPRequest
+from common.url import URL
 
 ROOT = os.path.abspath(os.curdir)
 STATIC_URL = "/"

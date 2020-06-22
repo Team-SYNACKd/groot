@@ -1,11 +1,9 @@
-import sys
+import socket
+
 from .tcp_client import TCPClient
 
-sys.path.append("..")
-from http_common import URL, HTTPRequest
-
-import socket
-from urllib.parse import urlparse
+from common.url import URL
+from common.http import HTTPRequest
 
 class HTTPClient(TCPClient):
     def __init__(self, request: HTTPRequest):
