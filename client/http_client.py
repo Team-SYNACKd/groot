@@ -1,4 +1,5 @@
 import socket
+from typing import Tuple
 
 from .tcp_client import TCPClient
 
@@ -10,20 +11,20 @@ class HTTPClient(TCPClient):
         super().__init__(request.host, request.port, request.resource)
         self.request = request
 
-    def perform_http_request(self, host, resource, method='GET'):
+    def perform_http_request(self, host: str, resource: str, method='GET') -> str:
         request =  '{} {} HTTP/{}\r\nhost: {}\r\n\r\n'.format(method,
                                                               resource,
                                                               self.request.http_version,
                                                               host)
         return request.encode()
         
-    def end_of_header(self, length, data):
+    def end_of_header(self, length: int, data: bytes) -> str:
         return b'\r\n\r\n' in data
 
-    def end_of_content(self, length, data):
+    def end_of_content(self, length: int, data: bytes) -> str:
         return self.request.content_length <= length
 
-    def separate_header_and_body(self, data):
+    def separate_header_and_body(self, data: bytes) -> Tuple[bytes, bytes]:
         try:
             index = data.index(self.request.http_header_delimiter)
         except:
@@ -32,13 +33,13 @@ class HTTPClient(TCPClient):
             index += len(self.request.http_header_delimiter)
             return (data[:index], data[index:])
 
-    def get_content_length(self, header):
+    def get_content_length(self, header: bytes) -> int:
         for line in header.split(b'\r\n'):
             if self.request.content_length_field in line:
                 return int(line[len(self.request.content_length_field):])
         return 0
 
-    def recieve_response(self, sock):
+    def recieve_response(self, sock: socket):
         '''
         Reads an HTTP Response from the given socket. Returns that response as a
         tuple (header, body) as two sequences of bytes.

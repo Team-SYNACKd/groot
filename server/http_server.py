@@ -33,7 +33,7 @@ class HTTPServer(TCPServer):
 
     def prepare_response_headers(
         self,
-        extra_headers=None) -> str:
+        extra_headers: Dict = None) -> str:
         """Returns headers
         The `extra_headers` can be a dict for sending 
         extra headers for the current response
@@ -49,7 +49,7 @@ class HTTPServer(TCPServer):
             headers += "%s: %s\r\n" % (h, self.headers[h])
         return headers
 
-    def handle_request(self, data) -> str:
+    def handle_request(self, data: bytes) -> str:
         #TODO: Pretty much like a hack.
         #Need to find a pretty way to handle this.
         request = HTTPRequest(uri=URL(self.host))
@@ -63,7 +63,7 @@ class HTTPServer(TCPServer):
         response = handler(request)
         return response
 
-    def handle_http_501(self, request) -> None:
+    def handle_http_501(self, request: bytes) -> str:
         response_line = self.prepare_response_line(status_code=501)
         response_headers = self.prepare_response_headers()
         blank_line = "\r\n"
@@ -77,7 +77,7 @@ class HTTPServer(TCPServer):
             response_body
         )
 
-    def handle_GET(self, request):
+    def handle_GET(self, request: bytes) -> str:
         content = request.uri.strip('/') 
         filename = STATIC_ROOT + STATIC_URL + content # remove the slash from URI
 
